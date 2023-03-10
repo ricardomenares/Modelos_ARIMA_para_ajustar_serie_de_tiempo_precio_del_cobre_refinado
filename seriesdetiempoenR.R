@@ -3,7 +3,7 @@ library(readxl)
 library(stats)
 library(car)
 library(moments)
-data<-read_excel("C:/Users/ricar/Desktop/SEMESTRE 7/Series de Tiempo/5. Trabajos/preciocobre.xlsx")
+data<-read_excel("C:/Users/ricar/Downloads/Proyectos/Modelos_ARIMA_precio_del_cobre/preciocobre.xlsx")
 cobre<-ts(data$precio,frequency=12,start=c(2008,1))
 plot(cobre,xlab="Tiempo en meses",ylab="Precio del cobre refinado",
 main="Precio mensual en USD/libra del cobre refinado entre 2008-2022")
@@ -11,7 +11,8 @@ main="Precio mensual en USD/libra del cobre refinado entre 2008-2022")
 #### ACF
 acf(cobre,main="ACF de la serie del cobre refinado")
 
-### TEST DICKEY FULLER AUMENTADO
+### TEST DICKEY FULLER AUMENTADO para testear si la serie es estacionaria
+library(tseries)
 adf.test(cobre) #no es estacionaria
 
 #serie diferenciada
@@ -24,8 +25,9 @@ plot(cobrediff,xlab="Tiempo en meses",ylab="Precio del cobre refinado diferencia
 acf(cobrediff,main="ACF de la serie diferenciada del cobre refinado",lag.max=36) 
 ### ADF test
 adf.test(cobrediff)
+#ahora la serie diferenciada si es estacionaria
 
-### ACF y PACF serie diferenciada para detectar parámetros AR y MA en modelo heurístico
+### ACF y PACF serie diferenciada para detectar parÃ¡metros AR y MA en modelo heurÃ­stico
 par(mfrow=c(1,2))
 acf(cobrediff,main="ACF de la serie diferenciada del cobre refinado",lag.max=40) 
 pacf(cobrediff,main="PACF de la serie diferenciada del cobre refinado",ylab="PACF",lag.max=40)
@@ -60,10 +62,10 @@ abline(h=0,col="red",lwd=2)
 plot(residuals(modelo2),type="p",xlab="Tiempo en meses",main="Residuos del modelo ARIMA(2,1,1)(2,0,0)",
      ylab="Residuos")
 abline(h=0,col="red",lwd=2)
-plot(residuals(modeloheuristico1),type="p",xlab="Tiempo en meses",main="Residuos del modelo heurístico ARIMA(1,1,1)(1,0,0)",
+plot(residuals(modeloheuristico1),type="p",xlab="Tiempo en meses",main="Residuos del modelo heurÃ­stico ARIMA(1,1,1)(1,0,0)",
      ylab="Residuos")
 abline(h=0,col="red",lwd=2)
-plot(residuals(modeloheuristico2),type="p",xlab="Tiempo en meses",main="Residuos del modelo heurístico ARIMA(1,1,2)(1,0,0)",
+plot(residuals(modeloheuristico2),type="p",xlab="Tiempo en meses",main="Residuos del modelo heurÃ­stico ARIMA(1,1,2)(1,0,0)",
      ylab="Residuos")
 abline(h=0,col="red",lwd=2)
 
@@ -71,8 +73,8 @@ abline(h=0,col="red",lwd=2)
 par(mfrow=c(2,2))
 acf(residuals(modelo1),main="ACF de los residuos del modelo ARIMA(3,1,0)x(2,0,0)[12]")
 acf(residuals(modelo2),main="ACF de los residuos del modelo ARIMA(2,1,1)x(2,0,0)[12]")
-acf(residuals(modeloheuristico1),main="ACF de los residuos del modelo heurístico ARIMA(1,1,1)x(1,0,0)[12]")
-acf(residuals(modeloheuristico2),main="ACF de los residuos del modelo heurístico ARIMA(1,1,2)x(1,0,0)[12]")
+acf(residuals(modeloheuristico1),main="ACF de los residuos del modelo heurÃ­stico ARIMA(1,1,1)x(1,0,0)[12]")
+acf(residuals(modeloheuristico2),main="ACF de los residuos del modelo heurÃ­stico ARIMA(1,1,2)x(1,0,0)[12]")
 
 ### LJUNG-BOX
 BT1 <- rep(NA,60)
@@ -120,10 +122,10 @@ hist(residuals(modelo2),breaks=20,xlab="Residuos del modelo",
      main="Histograma de residuos del modelo ARIMA(2,1,1)x(2,0,0)[12]")
 hist(residuals(modeloheuristico1),breaks=20,xlab="Residuos del modelo",
      ylab="Frecuencia",
-     main="Histograma de residuos del modelo heurístico ARIMA(1,1,1)x(1,0,0)[12]")
+     main="Histograma de residuos del modelo heurÃ­stico ARIMA(1,1,1)x(1,0,0)[12]")
 hist(residuals(modeloheuristico2),breaks=20,xlab="Residuos del modelo",
      ylab="Frecuencia",
-     main="Histograma de residuos del modelo heurístico ARIMA(1,1,2)x(1,0,0)[12]")
+     main="Histograma de residuos del modelo heurÃ­stico ARIMA(1,1,2)x(1,0,0)[12]")
 
 #test Kolgomorov-Smirnov
 ks.test( residuals(modelo1) , "pnorm", mean=mean(residuals(modelo1)), sd=sd(residuals(modelo1)))
@@ -132,10 +134,10 @@ ks.test( residuals(modeloheuristico1) , "pnorm", mean=mean(residuals(modeloheuri
 ks.test( residuals(modeloheuristico2) , "pnorm", mean=mean(residuals(modeloheuristico2)) , sd=sd(residuals(modeloheuristico2)))
 
 #contraste de media cero
-t.test(residuals(modelo1),mu=0) #no se rechaza hipótesis nula de que la media es 0
-t.test(residuals(modelo2),mu=0) #no se rechaza hipótesis nula de que la media es 0
-t.test(residuals(modeloheuristico1),mu=0) #no se rechaza hipótesis nula de que la media es 0
-t.test(residuals(modeloheuristico2),mu=0) #no se rechaza hipótesis nula de que la media es 0
+t.test(residuals(modelo1),mu=0) #no se rechaza hipÃ³tesis nula de que la media es 0
+t.test(residuals(modelo2),mu=0) #no se rechaza hipÃ³tesis nula de que la media es 0
+t.test(residuals(modeloheuristico1),mu=0) #no se rechaza hipÃ³tesis nula de que la media es 0
+t.test(residuals(modeloheuristico2),mu=0) #no se rechaza hipÃ³tesis nula de que la media es 0
 
 ########################## Contraste homocedasticidad ########################3
 var.test(residuals(modelo1)[1:48], residuals(modelo1)[49:174], 
@@ -151,7 +153,7 @@ var.test(residuals(modeloheuristico2)[1:48], residuals(modeloheuristico2)[49:174
          null.value=1, alternative='two.sided',
          conf.level=0.95)
 
-#gráfico ajuste modelo 1
+#grÃ¡fico ajuste modelo 1
 plot(cobre,type="p",xlab="Tiempo en meses",main="Ajuste de ARIMA(3,1,0)x(2,0,0)[12] para la serie cobre"
      ,ylim=c(0,600),ylab="Precio del cobre diferenciado")
 lines(fitted.values(modelo1),col="blue",lwd=2)
@@ -159,7 +161,7 @@ lines(fitted.values(modelo1)+1.96*sqrt(modelo1$sigma2),col="red",lwd=3)
 lines(fitted.values(modelo1)-1.96*sqrt(modelo1$sigma2),col="red",lwd=3)
 legend(x="topright",legend=c("Ajuste","I.C al 95%"),fill=c("blue","red"))
 
-#gráfico ajuste modelo 2
+#grÃ¡fico ajuste modelo 2
 plot(cobre,type="p",xlab="Tiempo en meses",main="Ajuste de ARIMA(2,1,1)x(2,0,0)[12] para la serie cobre"
      ,ylim=c(0,600),ylab="Precio del cobre diferenciado")
 lines(fitted.values(modelo2),col="blue",lwd=2)
@@ -167,7 +169,7 @@ lines(fitted.values(modelo2)+1.96*sqrt(modelo2$sigma2),col="red",lwd=3)
 lines(fitted.values(modelo2)-1.96*sqrt(modelo2$sigma2),col="red",lwd=3)
 legend(x="topright",legend=c("Ajuste","I.C al 95%"),fill=c("blue","red"))
 
-#gráfico ajuste modelo heuristico 1
+#grÃ¡fico ajuste modelo heuristico 1
 plot(cobre,type="p",xlab="Tiempo en meses",main="Ajuste de ARIMA(1,1,1)x(1,0,0)[12] para la serie cobre"
      ,ylim=c(0,600),ylab="Precio del cobre diferenciado")
 lines(fitted.values(modeloheuristico1),col="blue",lwd=2)
@@ -175,7 +177,7 @@ lines(fitted.values(modeloheuristico1)+1.96*sqrt(modeloheuristico1$sigma2),col="
 lines(fitted.values(modeloheuristico1)-1.96*sqrt(modeloheuristico1$sigma2),col="red",lwd=3)
 legend(x="topright",legend=c("Ajuste","I.C al 95%"),fill=c("blue","red"))
 
-#gráfico ajuste modelo heuristico 2
+#grÃ¡fico ajuste modelo heuristico 2
 plot(cobre,type="p",xlab="Tiempo en meses",main="Ajuste de ARIMA(1,1,2)x(1,0,0)[12] para la serie cobre"
      ,ylim=c(0,600),ylab="Precio del cobre diferenciado")
 lines(fitted.values(modeloheuristico2),col="blue",lwd=2)
@@ -183,22 +185,22 @@ lines(fitted.values(modeloheuristico2)+1.96*sqrt(modeloheuristico2$sigma2),col="
 lines(fitted.values(modeloheuristico2)-1.96*sqrt(modeloheuristico2$sigma2),col="red",lwd=3)
 legend(x="topright",legend=c("Ajuste","I.C al 95%"),fill=c("blue","red"))
 
-### predicción
+### predicciÃ³n
 par(mfrow=c(2,2))
 plot(forecast(modelo1,h=6,level=c(95)),
-     main="Predicción de ARIMA(3,1,0)x(2,0,0)[12] hasta diciembre 2022",xlab="Tiempo en meses",
+     main="PredicciÃ³n de ARIMA(3,1,0)x(2,0,0)[12] hasta diciembre 2022",xlab="Tiempo en meses",
      ylab="Precio del cobre refinado")
 plot(forecast(modelo2,h=6,level=c(95)),
-     main="Predicción de ARIMA(2,1,1)x(2,0,0)[12] hasta diciembre 2022",xlab="Tiempo en meses",
+     main="PredicciÃ³n de ARIMA(2,1,1)x(2,0,0)[12] hasta diciembre 2022",xlab="Tiempo en meses",
      ylab="Precio del cobre refinado")
 plot(forecast(modeloheuristico1,h=6,level=c(95)),
-     main="Predicción de ARIMA(1,1,1)x(1,0,0)[12] hasta diciembre 2022",xlab="Tiempo en meses",
+     main="PredicciÃ³n de ARIMA(1,1,1)x(1,0,0)[12] hasta diciembre 2022",xlab="Tiempo en meses",
      ylab="Precio del cobre refinado")
 plot(forecast(modeloheuristico2,h=6,level=c(95)),
-     main="Predicción de ARIMA(1,1,2)x(1,0,0)[12] hasta diciembre 2022",xlab="Tiempo en meses",
+     main="PredicciÃ³n de ARIMA(1,1,2)x(1,0,0)[12] hasta diciembre 2022",xlab="Tiempo en meses",
      ylab="Precio del cobre refinado")
 
-#valores de predicción
+#valores de predicciÃ³n
 forecast(modelo1,h=6,level=c(95))
 forecast(modelo2,h=6,level=c(95))
 forecast(modeloheuristico1,h=6,level=c(95))
